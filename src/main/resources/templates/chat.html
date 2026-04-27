@@ -292,13 +292,16 @@
 
 <script>
     let stompClient = null;
-    let myName = '';
+    let myName = localStorage.getItem('chat_username') || '';
 
     function setConnected(connected) {
         document.getElementById('sendBtn').disabled = !connected;
         document.getElementById('connBadge').textContent = connected
             ? 'End-to-end · Encrypted channel'
             : 'Disconnected';
+        if(myName) {
+            document.getElementById('senderInput').value = myName;
+        }
     }
 
     function connect() {
@@ -326,7 +329,8 @@
         const emptyState = document.getElementById('emptyState');
         if (emptyState) emptyState.remove();
 
-        const isSelf = message.sender === myName && myName !== '';
+        // 3. This now works on refresh because myName is loaded from localStorage
+        const isSelf = message.sender === myName;
 
         const row = document.createElement('div');
         row.className = 'message-row' + (isSelf ? ' self' : '');
@@ -348,8 +352,15 @@
     function sendMessage() {
         const sender = document.getElementById('senderInput').value.trim();
         const content = document.getElementById('messageInput').value.trim();
+
         if (!sender || !content || !stompClient) return;
-        myName = sender;
+
+        // 4. Save the name so it survives a refresh
+        if (sender !== myName) {
+            myName = sender;
+            localStorage.setItem('chat_username', sender);
+        }
+
         stompClient.send('/app/sendMessage', {}, JSON.stringify({ sender, content }));
         document.getElementById('messageInput').value = '';
     }
