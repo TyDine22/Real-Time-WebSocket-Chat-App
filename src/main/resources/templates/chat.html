@@ -305,6 +305,11 @@
     }
 
     function connect() {
+        myName = localStorage.getItem('chat_username') || '';
+
+        if(myName) {
+            document.getElementById('senderInput').value = myName;
+        }
         fetch('/chat/history')
             .then(response => response.json())
             .then(messages => {
