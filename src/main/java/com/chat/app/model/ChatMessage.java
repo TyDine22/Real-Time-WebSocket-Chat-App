@@ -2,13 +2,17 @@ package com.chat.app.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
+@Document(collection = "messages")
 public class ChatMessage {
-    private Long id;
+    @Id
+    private String id;
     private String sender;
     private String content;
     private LocalDateTime timestamp = LocalDateTime.now();
