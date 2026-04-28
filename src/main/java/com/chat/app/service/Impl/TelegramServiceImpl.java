@@ -16,9 +16,9 @@ import java.util.Map;
 @Service
 @Slf4j
 public class TelegramServiceImpl implements TelegramService {
-    @Value("${telegram.bot.token}")
+    @Value("${telegram_bot_token}")
     private String botToken;
-    @Value("${telegram.chat.id}")
+    @Value("${telegram_chat_id}")
     private String chatId;
     private final RestTemplate restTemplate = new RestTemplate();
 
