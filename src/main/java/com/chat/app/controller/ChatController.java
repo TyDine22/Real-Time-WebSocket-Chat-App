@@ -2,6 +2,8 @@ package com.chat.app.controller;
 
 import com.chat.app.model.ChatMessage;
 import com.chat.app.repository.ChatMessageRepository;
+import com.chat.app.service.TelegramService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -16,13 +18,17 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
+@RequiredArgsConstructor
 public class ChatController {
     @Autowired
     private ChatMessageRepository repository;
+    private final TelegramService telegramService;
     @MessageMapping("/sendMessage")
     @SendTo("/topic/messages")
     public ChatMessage sendMessage(ChatMessage message){
-
+        ChatMessage saved = repository.save(message);
+        System.out.println(">>> Calling Telegram for: " + saved.getSender());
+        telegramService.notifyNewMessage(saved);
         return repository.save(message);
     }
 
